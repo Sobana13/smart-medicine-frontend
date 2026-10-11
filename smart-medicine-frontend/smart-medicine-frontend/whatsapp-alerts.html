@@ -1,0 +1,101 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Alerts - MediRemind</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f8f4;
+            color: #173d2d;
+            padding: 25px;
+        }
+        .container {
+            max-width: 550px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+        input, textarea, button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin: 8px 0 16px;
+        }
+        button {
+            background: #16834a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        textarea {
+            min-height: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WhatsApp Medicine Alerts</h1>
+        <p>Create a reminder message for your caregiver.</p>
+
+        <label for="phone">WhatsApp number (with country code)</label>
+        <input id="phone" type="tel" placeholder="919876543210">
+
+        <label for="medicine">Medicine name</label>
+        <input id="medicine" placeholder="Example: Vitamin tablet" required>
+
+        <label for="time">Medicine time</label>
+        <input id="time" type="time" required>
+
+        <label for="message">Message preview</label>
+        <textarea id="message" readonly></textarea>
+
+        <button id="preview">Create Reminder Message</button>
+        <button id="send">Open WhatsApp</button>
+
+        <p id="status"></p>
+    </div>
+
+    <script>
+        const medicine = document.getElementById("medicine");
+        const time = document.getElementById("time");
+        const message = document.getElementById("message");
+        const phone = document.getElementById("phone");
+        const status = document.getElementById("status");
+
+        function createMessage() {
+            if (!medicine.value.trim() || !time.value) {
+                status.textContent = "Please enter the medicine name and time.";
+                return false;
+            }
+
+            message.value =
+                `Medicine Reminder: Please take ${medicine.value.trim()} at ${time.value}.`;
+            status.textContent = "Reminder message created.";
+            return true;
+        }
+
+        document.getElementById("preview").addEventListener("click", createMessage);
+
+        document.getElementById("send").addEventListener("click", () => {
+            if (!createMessage()) return;
+
+            const number = phone.value.replace(/\D/g, "");
+
+            if (!number) {
+                status.textContent = "Please enter a WhatsApp number with country code.";
+                return;
+            }
+
+            const url = "https://wa.me/" + number +
+                "?text=" + encodeURIComponent(message.value);
+
+            window.open(url, "_blank", "noopener,noreferrer");
+        });
+    </script>
+</body>
+</html>

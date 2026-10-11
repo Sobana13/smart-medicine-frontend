@@ -1,0 +1,53 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicines - MediRemind</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <h1>My Medicines</h1>
+    <form id="medicineForm">
+        <label>Medicine Name</label>
+        <input type="text" id="medicineName" required>
+
+        <label>Dosage</label>
+        <input type="text" id="dosage" required>
+
+        <label>Time</label>
+        <input type="time" id="medicineTime" required>
+
+        <button type="submit">Add Medicine</button>
+    </form>
+
+    <h2>Medicine List</h2>
+    <ul id="medicineList"></ul>
+
+    <script>
+        const form = document.getElementById("medicineForm");
+        const list = document.getElementById("medicineList");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("medicineName").value;
+            const dosage = document.getElementById("dosage").value;
+            const time = document.getElementById("medicineTime").value;
+
+            const item = document.createElement("li");
+            item.textContent = `${name} - ${dosage} - ${time}`;
+
+            const button = document.createElement("button");
+            button.textContent = "Delete";
+            button.onclick = () => item.remove();
+
+            item.appendChild(button);
+            list.appendChild(item);
+            form.reset();
+        });
+    </script>
+</body>
+</html>
+```

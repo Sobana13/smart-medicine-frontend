@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard - MediRemind</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="dashboard">
+<a class="skip" href="#main">Skip to main content</a>
+<main id="main" tabindex="-1">
+  <h1 id="greet">Welcome</h1>
+  <p class="muted" id="today"></p>
+
+  <section class="stats" id="stats" aria-label="Today's summary"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></section>
+
+  <div class="grid-2">
+    <section class="card next" id="next" aria-label="Next reminder"><div class="skeleton" style="opacity:.3"></div></section>
+    <section class="card" aria-labelledby="h-chart">
+      <h2 id="h-chart">Adherence over the last 7 days</h2>
+      <div id="chart"><div class="skeleton"></div></div>
+    </section>
+  </div>
+
+  <section class="card" aria-labelledby="h-sched">
+    <div class="row" style="justify-content:space-between"><h2 id="h-sched">Today's schedule</h2><a href="schedule.html" class="btn btn-ghost btn-sm">Open full schedule</a></div>
+    <div id="sched"><div class="skeleton"></div></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-notes">
+    <h2 id="h-notes">Recent notifications</h2>
+    <ul class="list" id="notes"></ul>
+  </section>
+
+  <p class="note"><i class="fa-solid fa-stethoscope" aria-hidden="true"></i> Statuses are reported by the patient and do not confirm that medicine was taken. Always follow your doctor's prescription.</p>
+</main>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>

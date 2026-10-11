@@ -1,0 +1,208 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History & Reports | Smart Medicine</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            padding: 30px;
+            color: #263445;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #2457a7;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #68778a;
+            margin-bottom: 25px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        .card p {
+            color: #68778a;
+            margin-bottom: 12px;
+        }
+
+        .card h2 {
+            color: #2457a7;
+            font-size: 30px;
+        }
+
+        .history {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 18px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 14px;
+            border-bottom: 1px solid #e8edf3;
+        }
+
+        th {
+            background: #edf3fc;
+        }
+
+        .empty {
+            text-align: center;
+            color: #68778a;
+            padding: 25px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 7px;
+            background: #2457a7;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #173f80;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 22px;
+            color: #2457a7;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back" href="dashboard.html">← Back to Dashboard</a>
+
+        <h1>History & Reports</h1>
+        <p class="subtitle">View your saved medicine schedules.</p>
+
+        <div class="stats">
+            <div class="card">
+                <p>Total Schedules</p>
+                <h2 id="total">0</h2>
+            </div>
+
+            <div class="card">
+                <p>Today's Schedules</p>
+                <h2 id="today">0</h2>
+            </div>
+        </div>
+
+        <div class="history">
+            <h2>Schedule History</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="historyList"></tbody>
+            </table>
+
+            <button onclick="downloadReport()">Download Report</button>
+        </div>
+    </div>
+
+    <script>
+        const schedules = JSON.parse(
+            localStorage.getItem("medicineSchedules") || "[]"
+        );
+
+        const list = document.getElementById("historyList");
+        const todayDate = new Date().toISOString().split("T")[0];
+
+        document.getElementById("total").textContent = schedules.length;
+
+        document.getElementById("today").textContent =
+            schedules.filter(item => item.date === todayDate).length;
+
+        if (schedules.length === 0) {
+            list.innerHTML = `
+                <tr>
+                    <td colspan="3" class="empty">
+                        No schedules found. Add a schedule first.
+                    </td>
+                </tr>
+            `;
+        } else {
+            schedules.forEach(item => {
+                const row = document.createElement("tr");
+
+                [item.name || "Medicine", item.date || "-", item.time || "-"]
+                    .forEach(value => {
+                        const cell = document.createElement("td");
+                        cell.textContent = value;
+                        row.appendChild(cell);
+                    });
+
+                list.appendChild(row);
+            });
+        }
+
+        function downloadReport() {
+            let report = "Medicine Schedule Report\n\n";
+
+            report += "Medicine,Date,Time\n";
+
+            schedules.forEach(item => {
+                report += `"${item.name || "Medicine"}","${item.date || "-"}","${item.time || "-"}"\n`;
+            });
+
+            const blob = new Blob([report], {
+                type: "text/csv;charset=utf-8;"
+            });
+
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "medicine-report.csv";
+            link.click();
+
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+</body>
+</html>
+```

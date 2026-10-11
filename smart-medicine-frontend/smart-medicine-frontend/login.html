@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in - MediRemind</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="auth">
+  <section class="auth-side" aria-label="About MediRemind">
+    <div class="brand" style="color:#fff"><span class="brand-mark" style="background:rgba(255,255,255,.18)"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i></span>MediRemind</div>
+    <h1>Never wonder if it is time for your medicine.</h1>
+    <ul>
+      <li><i class="fa-solid fa-bell"></i> Clear reminders for every scheduled dose</li>
+      <li><i class="fa-solid fa-user-nurse"></i> Caregivers can see doses that were not confirmed</li>
+      <li><i class="fa-brands fa-whatsapp"></i> WhatsApp alerts once the backend is connected</li>
+    </ul>
+    <p style="opacity:.85;font-size:.9rem">MediRemind never changes your dosage. Always follow your doctor's prescription.</p>
+  </section>
+  <main class="auth-form" id="main">
+    <div>
+      <div class="seg" role="tablist" aria-label="Account actions">
+        <button role="tab" id="t-login" aria-selected="true" data-tab="login">Sign in</button>
+        <button role="tab" id="t-register" aria-selected="false" data-tab="register">Create account</button>
+      </div>
+      <p class="note" style="margin-top:1rem"><i class="fa-solid fa-triangle-exclamation"></i> Prototype only. This form does not verify identity or store passwords. Secure sign-in will be provided by the Flask backend.</p>
+
+      <form id="f-login" novalidate>
+        <h1 style="margin:1rem 0">Welcome back</h1>
+        <div class="field"><label for="l-role">I am a</label>
+          <select id="l-role"><option value="patient">Patient</option><option value="caregiver">Caregiver</option></select></div>
+        <div class="field"><label for="l-email">Email</label><input id="l-email" type="email" autocomplete="email"><div class="err" id="l-email-e" role="alert"></div></div>
+        <div class="field"><label for="l-pw">Password</label>
+          <div class="pw"><input id="l-pw" type="password" autocomplete="current-password"><button type="button" class="pw-toggle" aria-label="Show password" data-for="l-pw"><i class="fa-solid fa-eye"></i></button></div>
+          <div class="err" id="l-pw-e" role="alert"></div></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" id="l-btn">Sign in</button>
+        <p style="text-align:center;margin-top:1rem"><a href="#" id="forgot">Forgot password?</a></p>
+      </form>
+
+      <form id="f-register" novalidate hidden>
+        <h1 style="margin:1rem 0">Create your account</h1>
+        <div class="field"><label for="r-name">Full name</label><input id="r-name" autocomplete="name"><div class="err" id="r-name-e" role="alert"></div></div>
+        <div class="field"><label for="r-email">Email</label><input id="r-email" type="email" autocomplete="email"><div class="err" id="r-email-e" role="alert"></div></div>
+        <div class="field"><label for="r-phone">Phone number</label><input id="r-phone" type="tel" placeholder="+91 98765 43210" autocomplete="tel"><div class="err" id="r-phone-e" role="alert"></div></div>
+        <div class="field"><label for="r-pw">Password (at least 8 characters)</label>
+          <div class="pw"><input id="r-pw" type="password" autocomplete="new-password"><button type="button" class="pw-toggle" aria-label="Show password" data-for="r-pw"><i class="fa-solid fa-eye"></i></button></div>
+          <div class="err" id="r-pw-e" role="alert"></div></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" id="r-btn">Create account</button>
+      </form>
+
+      <form id="f-forgot" novalidate hidden>
+        <h1 style="margin:1rem 0">Reset your password</h1>
+        <p class="muted">Enter your email and we will send a reset link once the backend is connected.</p>
+        <div class="field"><label for="f-email">Email</label><input id="f-email" type="email"><div class="err" id="f-email-e" role="alert"></div></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center">Send reset link</button>
+        <p style="text-align:center;margin-top:1rem"><a href="#" id="back">Back to sign in</a></p>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/, PHONE = /^\+?[0-9 ]{10,15}$/;
+function check(id, ok, msg) { $(id).classList.toggle("invalid", !ok); $(id + "-e").textContent = ok ? "" : msg; return ok; }
+function show(which) {
+  ["login", "register", "forgot"].forEach(k => $("f-" + k).hidden = k !== which);
+  ["login", "register"].forEach(k => $("t-" + k).setAttribute("aria-selected", k === which));
+}
+document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => show(b.dataset.tab));
+$("forgot").onclick = e => { e.preventDefault(); show("forgot"); };
+$("back").onclick = e => { e.preventDefault(); show("login"); };
+document.querySelectorAll(".pw-toggle").forEach(b => b.onclick = () => {
+  const i = $(b.dataset.for), vis = i.type === "password"; i.type = vis ? "text" : "password";
+  b.setAttribute("aria-label", vis ? "Hide password" : "Show password"); b.firstElementChild.className = vis ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
+});
+function enter(name, role) { setSession({ name, role }); location.href = "dashboard.html"; }
+$("f-login").onsubmit = e => {
+  e.preventDefault();
+  const a = check("l-email", EMAIL.test($("l-email").value.trim()), "Enter a valid email address, like name@example.com.");
+  const b = check("l-pw", $("l-pw").value.length >= 8, "Enter your password (at least 8 characters).");
+  if (!a || !b) return;
+  const n = $("l-email").value.split("@")[0]; enter(n.charAt(0).toUpperCase() + n.slice(1), $("l-role").value);
+};
+$("f-register").onsubmit = e => {
+  e.preventDefault();
+  const r = [check("r-name", $("r-name").value.trim().length >= 2, "Enter your full name."),
+    check("r-email", EMAIL.test($("r-email").value.trim()), "Enter a valid email address."),
+    check("r-phone", PHONE.test($("r-phone").value.trim()), "Enter a phone number with 10 to 15 digits."),
+    check("r-pw", $("r-pw").value.length >= 8, "Use at least 8 characters.")];
+  if (r.every(Boolean)) enter($("r-name").value.trim(), "patient");
+};
+$("f-forgot").onsubmit = e => {
+  e.preventDefault();
+  if (check("f-email", EMAIL.test($("f-email").value.trim()), "Enter a valid email address."))
+    toast("Demo mode: no email was sent. Password reset needs the backend.", "info");
+};
+</script>
+</body>
+</html>

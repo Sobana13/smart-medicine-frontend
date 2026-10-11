@@ -1,0 +1,135 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caregiver View - MediRemind</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f8f7;
+            margin: 0;
+            padding: 25px;
+            color: #173d3b;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px #00000010;
+        }
+        input, button {
+            padding: 12px;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+        input {
+            width: 100%;
+        }
+        button {
+            background: #11796f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        li {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Caregiver View</h1>
+        <p>View and manage a patient's medicine schedule.</p>
+
+        <div class="card">
+            <h2>Patient Details</h2>
+            <label for="patientName">Patient name</label>
+            <input id="patientName" placeholder="Enter patient name">
+
+            <label for="caregiverName">Caregiver name</label>
+            <input id="caregiverName" placeholder="Enter caregiver name">
+
+            <button id="saveDetails">Save Details</button>
+            <p id="status"></p>
+        </div>
+
+        <div class="card">
+            <h2>Saved Details</h2>
+            <p id="patientDisplay">Patient: Not added</p>
+            <p id="caregiverDisplay">Caregiver: Not added</p>
+        </div>
+
+        <div class="card">
+            <h2>Medicine Schedule</h2>
+            <ul id="medicineList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const patientInput = document.getElementById("patientName");
+        const caregiverInput = document.getElementById("caregiverName");
+
+        function loadDetails() {
+            const details = JSON.parse(
+                localStorage.getItem("caregiverDetails") || "{}"
+            );
+
+            patientInput.value = details.patient || "";
+            caregiverInput.value = details.caregiver || "";
+
+            document.getElementById("patientDisplay").textContent =
+                "Patient: " + (details.patient || "Not added");
+
+            document.getElementById("caregiverDisplay").textContent =
+                "Caregiver: " + (details.caregiver || "Not added");
+        }
+
+        document.getElementById("saveDetails").addEventListener("click", () => {
+            const details = {
+                patient: patientInput.value.trim(),
+                caregiver: caregiverInput.value.trim()
+            };
+
+            localStorage.setItem("caregiverDetails", JSON.stringify(details));
+            loadDetails();
+
+            document.getElementById("status").textContent = "Details saved!";
+        });
+
+        function loadSchedules() {
+            const schedules = JSON.parse(
+                localStorage.getItem("medicineSchedules") || "[]"
+            );
+
+            const list = document.getElementById("medicineList");
+            list.replaceChildren();
+
+            if (schedules.length === 0) {
+                const item = document.createElement("li");
+                item.textContent = "No schedules added yet.";
+                list.appendChild(item);
+                return;
+            }
+
+            schedules.forEach(schedule => {
+                const item = document.createElement("li");
+                item.textContent =
+                    `${schedule.medicine} — ${schedule.date} at ${schedule.time}`;
+                list.appendChild(item);
+            });
+        }
+
+        loadDetails();
+        loadSchedules();
+    </script>
+</body>
+</html>
+```

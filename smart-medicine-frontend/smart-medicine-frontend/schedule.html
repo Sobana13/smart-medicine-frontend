@@ -1,0 +1,112 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Schedule - MediRemind</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f4f8f8;
+            color: #123b3b;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+        input, button {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+        }
+        button {
+            background: #11796f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        li {
+            margin: 12px 0;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Medicine Schedule</h1>
+        <form id="scheduleForm">
+            <label>Medicine Name</label>
+            <input id="medicine" required>
+
+            <label>Date</label>
+            <input type="date" id="date" required>
+
+            <label>Time</label>
+            <input type="time" id="time" required>
+
+            <button type="submit">Add Schedule</button>
+        </form>
+
+        <h2>My Schedule</h2>
+        <ul id="scheduleList"></ul>
+    </div>
+
+    <script>
+        const form = document.getElementById("scheduleForm");
+        const list = document.getElementById("scheduleList");
+
+        let schedules = JSON.parse(localStorage.getItem("medicineSchedules") || "[]");
+
+        function displaySchedules() {
+            list.replaceChildren();
+
+            schedules.forEach((schedule, index) => {
+                const item = document.createElement("li");
+                item.append(
+                    document.createTextNode(
+                        `${schedule.medicine} - ${schedule.date} - ${schedule.time} `
+                    )
+                );
+
+                const remove = document.createElement("button");
+                remove.textContent = "Delete";
+                remove.onclick = () => {
+                    schedules.splice(index, 1);
+                    saveSchedules();
+                };
+
+                item.appendChild(remove);
+                list.appendChild(item);
+            });
+        }
+
+        function saveSchedules() {
+            localStorage.setItem("medicineSchedules", JSON.stringify(schedules));
+            displaySchedules();
+        }
+
+        form.addEventListener("submit", event => {
+            event.preventDefault();
+
+            schedules.push({
+                medicine: document.getElementById("medicine").value.trim(),
+                date: document.getElementById("date").value,
+                time: document.getElementById("time").value
+            });
+
+            saveSchedules();
+            form.reset();
+        });
+
+        displaySchedules();
+    </script>
+</body>
+</html>
+```
